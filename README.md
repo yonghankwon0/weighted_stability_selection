@@ -1,19 +1,16 @@
 # weighted_stability_selection
 
+## Summary
 Stability selection (Meinshausen and Bühlmann, 2010) is a variable selection algorithm based on resampling a dataset. Based on stability selection, we propose weighted stability selection to select variables by weighing them using the area under the receiver operating characteristic curve (AUC) from additional modelling. The proposed method was evaluated using an extensive simulation study to measure the true positive rate (TPR), positive predictive value (PPV), and stability of variable selection. We also assessed the predictive ability of the method using a validation set. The proposed method performed similarly to stability selection in terms of the TPR, PPV, and stability. The AUC of the model fitted on the validation set with the selected variables of the proposed method was consistently higher in specific scenarios. Moreover, when applied to a radiomics dataset, the proposed method had a higher AUC when fewer variables were selected. A major advantage of the proposed method is that it enables researchers to select variables intuitively using relatively simple parameter settings.
-
-
 
 ![flow_chart](https://user-images.githubusercontent.com/31601961/195785330-248d46db-fc11-462a-8ab5-772786dfe54e.jpg)
 
+## List of Files
+1. data_generate.R = R file for simulation data generation
+2. weighted_stabiltiy_selection.R = R file for suggested "weighted_stability_selection"  
+  
 
-List of Files:
-
-data_generate.R = R file for simulation data generation
-weighted_stabiltiy_selection.R = R file for suggested "weighted_stability_selection"
-
-
-
+## Code example
 ```{r, include = FALSE}
 data_generated <- data_generate(n = 500, p = 1000, p_signal = 20, coef_1 = 2, data_cov = "toep", prevalence = 0.5)
 data <- data_generated$data[,-1]
