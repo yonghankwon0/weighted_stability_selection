@@ -5,6 +5,8 @@ Stability selection (Meinshausen and Bühlmann, 2010) is a variable selection al
 
 ![flow_chart](https://user-images.githubusercontent.com/31601961/230020510-29148ba3-6b10-493a-8b33-01a345e3a290.jpg)
 
+https://www.nature.com/articles/s41598-023-32517-4
+
 ## List of Files
 1. data_generate.R = R file for simulation data generation
 2. weighted_stabiltiy_selection.R = R file for suggested "weighted_stability_selection"  
