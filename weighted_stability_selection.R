@@ -1,7 +1,7 @@
-weighted_stabiltiy_selection <- function(data, y, B = 50) {
+weighted_stabiltiy_selection <- function(data, B = 50) {
   
-  library(glmnet); library(ROCR)
-  
+  library(tidyverse); library(MASS); library(glmnet); library(parallel); library(doParallel); library(ROCR)
+
   n <- dim(data)[1]
   p <- dim(data)[2]-1
   
@@ -9,17 +9,17 @@ weighted_stabiltiy_selection <- function(data, y, B = 50) {
   
   for (i in 1:B) {
     
-    # split 1
+    # split1
     data_split <- sample(1:n,floor(n/2),replace = F)
     
-    data_subsample1 <- as.matrix(data[data_split,])
-    cv_glmnet_1 <- cv.glmnet(x = data_subsample1[,!(colnames(data_subsample1) %in% y)], y = data_subsample1[,y],
+    data_subsample1 <- data[data_split,]
+    cv_glmnet_1 <- cv.glmnet(x = data_subsample1[,1:p] %>% as.matrix, y = c(data_subsample1[,p+1]),
                              family = "binomial",
                              parallel = T)
     
-    # split 2
-    data_subsample2 <- as.matrix(data[-data_split,])
-    cv_glmnet_2 <- cv.glmnet(x = data_subsample2[,!(colnames(data_subsample2) %in% y)], y = data_subsample2[,y],
+    #split2
+    data_subsample2 <- data[-data_split,]
+    cv_glmnet_2 <- cv.glmnet(x = data_subsample2[,1:p] %>% as.matrix, y = c(data_subsample2[,p+1]),
                              family = "binomial",
                              parallel = T)
     
@@ -31,17 +31,17 @@ weighted_stabiltiy_selection <- function(data, y, B = 50) {
     
     # if there is no intersect try it again and again
     while (length(coef_intersect) < 2){
-      # split 1
+      # split1
       data_split <- sample(1:n,floor(n/2),replace = F)
       
-      data_subsample1 <- as.matrix(data[data_split,])
-      cv_glmnet_1 <- cv.glmnet(x = data_subsample1[,1:p], y = data_subsample1[,p+1],
+      data_subsample1 <- data[data_split,]
+      cv_glmnet_1 <- cv.glmnet(x = data_subsample1[,1:p] %>% as.matrix, y = c(data_subsample1[,p+1]),
                                family = "binomial",
                                parallel = T)
       
-      # split 2
-      data_subsample2 <- as.matrix(data[-data_split,])
-      cv_glmnet_2 <- cv.glmnet(x = data_subsample2[,1:p], y = data_subsample2[,p+1],
+      #split2
+      data_subsample2 <- data[-data_split,]
+      cv_glmnet_2 <- cv.glmnet(x = data_subsample2[,1:p] %>% as.matrix, y = c(data_subsample2[,p+1]),
                                family = "binomial",
                                parallel = T)
       
@@ -54,7 +54,7 @@ weighted_stabiltiy_selection <- function(data, y, B = 50) {
     
     
     coef_intersect_no_intercept <- coef_intersect[!(coef_intersect %in% "(Intercept)")]
-    formula <- as.formula(paste(y, "~", paste(paste0("`",coef_intersect_no_intercept,"`"), collapse=" + ")))
+    formula <- as.formula(paste(paste0(colnames(data)[p+1]," ~ "), paste(paste0("`",coef_intersect_no_intercept,"`"), collapse=" + ")))
     
     glm_1 <- glm(formula,
                  data=data,
@@ -66,7 +66,7 @@ weighted_stabiltiy_selection <- function(data, y, B = 50) {
       filtered_feature <- coef_intersect_no_intercept
     }
     
-    formula2 <- as.formula(paste(y, "~", paste(paste0("`",filtered_feature,"`"), collapse=" + ")))
+    formula2 <- as.formula(paste(paste0(colnames(data)[p+1]," ~ "), paste(paste0("`",filtered_feature,"`"), collapse=" + ")))
     
     glm_2 <- glm(formula2,
                  data=data,
