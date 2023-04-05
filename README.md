@@ -15,5 +15,6 @@ Stability selection (Meinshausen and Bühlmann, 2010) is a variable selection al
 data_generated <- data_generate(n = 500, p = 1000, p_signal = 20, coef_1 = 2, data_cov = "toep", prevalence = 0.5)
 data <- data_generated$data[,-1]
 y <- colnames(data)[dim(data)[2]]
+doParallel::registerDoParallel(detectCores())
 weighted_stabiltiy_selection(data, y, B = 50)
 ```
