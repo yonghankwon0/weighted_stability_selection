@@ -31,7 +31,7 @@ data_generate <- function(n, p, p_signal, coef_1, data_cov, prevalence) {
   logistic <- exp(linear)/(1+exp(linear))
   
   y <- rbinom(n = n*2, size = 1, prob = logistic)  
-  data_1 <- as.data.frame(cbind(1:n,data,y))
+  data_1 <- as.data.frame(cbind(1:(n*2),data,y))
   names(data_1) <- c("index",1:p,"y")
   
   size_sample <- (sample(c(0,1),n,prob=c(1-prevalence,prevalence),replace = T) %>% table())
